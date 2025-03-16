@@ -1,0 +1,73 @@
+:root {
+    --light: #efe9e1;
+    --medium1: #d1c7bd;
+    --medium2: #ac9c8d;
+    --dark: #322d29;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--dark);
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+}
+
+svg path {
+    fill: var(--light);
+    stroke: black;
+    stroke-width: 1;
+}
+
+svg path:hover {
+    fill: var(--medium1);
+    cursor: pointer;
+}
+
+.button-container {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+}
+
+.button-container button {
+    background-color: var(--light);
+    width: fit-content;
+    border-radius: 5px;
+    border: 3px solid var(--medium2);
+    padding: 3px;
+    font-size: 24px;
+    font-family: inherit;
+}
+
+.button-container button:hover {
+    background-color: var(--medium2);
+    cursor: pointer;
+}
+
+.palette-container {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    color: var(--light);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#palette {
+    background: linear-gradient(90deg,#f7feae 0,#f7feae 14.285714285714286%,#b7e6a5 14.285714285714286%,#b7e6a5 28.571428571428573%,#7ccba2 28.571428571428573%,#7ccba2 42.857142857142854%,#46aea0 42.857142857142854%,#46aea0 57.142857142857146%,#089099 57.142857142857146%,#089099 71.42857142857143%,#00718b 71.42857142857143%,#00718b 85.71428571428571%,#045275 85.71428571428571%,#045275 100%);
+    width: 200px;
+    height: 50px;
+    border-radius: 5px;
+}
+
+#name {
+    position: absolute;
+    background-color: var(--light);
+    width: fit-content;
+    opacity: 0;
+    border-radius: 5px;
+    border: 3px solid var(--medium2);
+    padding: 3px;
+    font-size: 24px;
+}
