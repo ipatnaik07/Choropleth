@@ -15,6 +15,8 @@ let categories = {
     "Oil Production": ["List_of_countries_by_oil_production", 0, 1, null],
     "Meat Consumption": ["List_of_countries_by_meat_consumption", 0, 1, false]
 }
+let category = "";
+let guessed = false;
 
 function get_options() {
     var keys = Object.keys(categories);
@@ -161,15 +163,34 @@ function addListeners(category) {
     })
 }
 
+function guess(option) {
+    if (guessed) {
+        return;
+    }
+    
+    guessed = true;
+    for (let i = 0; i < buttons.length; i++) {
+        text = buttons[i].textContent;
+        if (text == category) {
+            buttons[i].style.backgroundColor = "#78c1a3"
+        } else if (text == option) {
+            buttons[i].style.backgroundColor = "#f38989"
+        }
+    }
+}
+
 function setButtons(options) {
     for (let i = 0; i < buttons.length; i++) {
         buttons[i].textContent = options[i];
-    };
+        buttons[i].addEventListener("click", () => {
+            guess(options[i]);
+        })
+    }
 }
 
 async function main() {
     var options = get_options();
-    var category = get_category(options);
+    category = get_category(options);
     //category = "Meat Consumption"
     var file = categories[category][0];
     var col = categories[category][1];

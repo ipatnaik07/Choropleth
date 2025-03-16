@@ -31,6 +31,7 @@ svg path:hover {
 }
 
 .button-container button {
+    color: var(--dark);
     background-color: var(--light);
     width: fit-content;
     border-radius: 5px;
@@ -63,6 +64,7 @@ svg path:hover {
 
 #name {
     position: absolute;
+    color: var(--dark);
     background-color: var(--light);
     width: fit-content;
     opacity: 0;
