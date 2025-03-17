@@ -3,20 +3,22 @@ let countries = document.querySelectorAll(".allPaths");
 let buttons = document.querySelectorAll('.button-container button');
 let tableData = [];
 let clickable = [];
-let colors = ['#045275', '#00718b', '#089099', '#46aea0', '#7ccba2', '#b7e6a5', '#f7feae'];
-let nicknames = {"democratic republic of the congo": ["dr congo"], "republic of the congo": ["congo"], "côte d'ivoire": ["ivory coast"], "greenland": ["greenland (denmark)"], "united states": ["united states of america"]}
-let categories = {
-    "Population": ["List_of_countries_and_dependencies_by_population", 0, 1, null],
-    "Population Density": ["List_of_countries_and_dependencies_by_population_density", 0, 1, null],
-    "GDP": ["List_of_countries_by_GDP_(nominal)", 0, 1, null],
-    "GDP Per Capita": ["List_of_countries_by_GDP_(nominal)_per_capita", 0, 1, null],
-    "Area": ["List_of_countries_and_dependencies_by_area", 1, 2, null],
-    "Life Expectancy": ["List_of_countries_by_life_expectancy", 0, 1, null],
-    "Oil Production": ["List_of_countries_by_oil_production", 0, 1, null],
-    "Meat Consumption": ["List_of_countries_by_meat_consumption", 0, 1, false]
-}
 let category = "";
 let guessed = false;
+let colors = ['#045275', '#00718b', '#089099', '#46aea0', '#7ccba2', '#b7e6a5', '#f7feae'];
+let nicknames = {"united states": ["united states of america"], "democratic republic of the congo": ["dr congo"], "republic of the congo": ["congo"], "czech republic": ["czechia"], "cape verde": ["cabo verde"], "ivory coast": ["côte d'ivoire"], "turkey": ["türkiye"], "eswatini": ["swaziland"], "north macedonia": ["macedonia"], "greenland": ["greenland (denmark)"], "falkland islands": ["falkland islands (uk)"], "new caledonia": ["new caledonia (france)"], "french polynesia": ["french polynesia (france)"]}
+let categories = {
+    "Population": ["List_of_countries_and_dependencies_by_population", 0, 0, 1, null],
+    "Population Density": ["List_of_countries_and_dependencies_by_population_density", 0, 0, 1, null],
+    "GDP": ["List_of_countries_by_GDP_(nominal)", 0, 0, 1, null],
+    "GDP Per Capita": ["List_of_countries_by_GDP_(nominal)_per_capita", 0, 0, 1, null],
+    "Area": ["List_of_countries_and_dependencies_by_area", 0, 1, 2, null],
+    "Life Expectancy": ["List_of_countries_by_life_expectancy", 0, 0, 1, null],
+    "Oil Production": ["List_of_countries_by_oil_production", 0, 0, 1, null],
+    "Meat Consumption": ["List_of_countries_by_meat_consumption", 0, 0, 1, false],
+    "Homicide Rate": ["List_of_countries_by_intentional_homicide_rate", 1, 0, 1, false],
+    "Air Pollution": ["List_of_countries_by_air_pollution", 0, 1, 2, false]
+}
 
 function get_options() {
     var keys = Object.keys(categories);
@@ -35,7 +37,7 @@ function get_category(options) {
     return options[index];
 }
 
-async function getWikipediaTable(file) {
+async function getWikipediaTable(file, tableIndex) {
     var url = "https://en.wikipedia.org/w/api.php?action=parse&page="+file+"&format=json&origin=*";
 
     try {
@@ -49,16 +51,17 @@ async function getWikipediaTable(file) {
         let tempDiv = document.createElement("div");
         tempDiv.innerHTML = htmlContent;
 
-        // Find the first table (modify this if necessary)
-        let table = tempDiv.querySelector("table.wikitable");
-
-        if (table) {
-            console.log("Table Found!");
-            tableData = parseTable(table);
+        // Find the first table (or other if necessary)
+        let table = null;
+        if (tableIndex == 0) {
+            table = tempDiv.querySelector("table.wikitable");
         } else {
-            console.log("No table found.");
+            table = tempDiv.querySelectorAll("table.wikitable")[tableIndex];
         }
-    } catch (error) {
+        tableData = parseTable(table);
+    }
+    
+    catch (error) {
         console.error("Error fetching data:", error);
     }
 }
@@ -67,7 +70,7 @@ function parseTable(table) {
     let rows = table.querySelectorAll("tr");
     let data = [];
 
-    rows.forEach((row, index) => {
+    rows.forEach(row => {
         let cells = row.querySelectorAll("td, th");
         let rowData = [];
 
@@ -92,7 +95,7 @@ function is_match(name, country) {
     if (country in nicknames && nicknames[country].includes(name)) {
         return true;
     }
-    if (name == country + " (opec)" || name == country + " (opec+)") {
+    if (name == country + " (opec)" || name == country + " (opec+)" || name == country + "\u202f*") {
         return true;
     }
     return false;
@@ -108,16 +111,17 @@ function getRankByCountry(countryName) {
 
 function getColorByCountry(countryName, category) {
     var rank = getRankByCountry(countryName);
-    if (rank != null) {
-        for (let i = 0; i < colors.length; i++) {
-            if (rank <= clickable.length / colors.length * (i+1)) {
-                return colors[i];
-            }
+    if (rank == null) {
+        if (countryName == "United States" && category == "Area") {
+            return colors[0];
         }
+        return null;
     }
 
-    else if (countryName == "United States" && category == "Area") {
-        return colors[0];
+    for (let i = 0; i < colors.length; i++) {
+        if (rank <= clickable.length / colors.length * (i+1)) {
+            return colors[i];
+        }
     }
 }
 
@@ -155,11 +159,14 @@ function addListeners(category) {
             nameLabel.style.opacity = 0
         })
         
-        c.addEventListener("click", () => {
-            document.querySelectorAll(`[id="${c.id}"]`).forEach(country => {
-                country.style.fill = getColorByCountry(c.id, category)
+        var color = getColorByCountry(c.id, category);
+        if (color != null) {
+            c.addEventListener("click", () => {
+                document.querySelectorAll(`[id="${c.id}"]`).forEach(country => {
+                    country.style.fill = color;
+                })
             })
-        })
+        }
     })
 }
 
@@ -191,13 +198,14 @@ function setButtons(options) {
 async function main() {
     var options = get_options();
     category = get_category(options);
-    //category = "Meat Consumption"
+    //category = "Air Pollution"
     var file = categories[category][0];
-    var col = categories[category][1];
-    var sortCol = categories[category][2];
-    var ascending = categories[category][3];
+    var tableIndex = categories[category][1];
+    var col = categories[category][2];
+    var sortCol = categories[category][3];
+    var ascending = categories[category][4];
     
-    await getWikipediaTable(file);
+    await getWikipediaTable(file, tableIndex);
     hitList(col, sortCol);
     if (ascending != null) {
         sortData(ascending);
@@ -210,4 +218,4 @@ async function main() {
     setButtons(options);
 }
 
-main()
+main();
