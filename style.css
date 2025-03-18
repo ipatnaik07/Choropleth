@@ -1,75 +1,110 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
 :root {
-    --light: #efe9e1;
-    --medium1: #d1c7bd;
-    --medium2: #ac9c8d;
-    --dark: #322d29;
+    --orange: #F2C14E;
+    --winning-blocks: #2d414b;
 }
 
 body {
+    color: var(--orange);
+    font-family: "Finger Paint", cursive;
+}
+
+h1 {
+    font-size: 40px;
+    text-transform: uppercase;
+}
+
+h2 {
+    font-size: 20px;
+    padding: 40px 0px 0px 0px;
+    white-space: pre;
+}
+
+.container {
+    padding: 40px;
+    height: 100vh;
     display: flex;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
-    align-items: center;
-    background-color: var(--dark);
-    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+    background-color: #37505C;
 }
 
-svg path {
-    fill: var(--light);
-    stroke: black;
-    stroke-width: 1;
-}
-
-svg path:hover {
-    fill: var(--medium1);
-    cursor: pointer;
-}
-
-.button-container {
-    margin-top: 20px;
+.game {
     display: flex;
-    gap: 20px;
-}
-
-.button-container button {
-    color: var(--dark);
-    background-color: var(--light);
-    width: fit-content;
-    border-radius: 5px;
-    border: 3px solid var(--medium2);
-    padding: 3px;
-    font-size: 24px;
-    font-family: inherit;
-}
-
-.button-container button:hover {
-    background-color: var(--medium2);
-    cursor: pointer;
-}
-
-.palette-container {
-    display: flex;
+    justify-content: center;
     align-items: center;
-    font-size: 24px;
-    color: var(--light);
-    gap: 10px;
-    margin-bottom: 20px;
+    margin-top: 40px;
+    gap: 40px;
 }
 
-#palette {
-    background: linear-gradient(90deg,#f7feae 0,#f7feae 14.285714285714286%,#b7e6a5 14.285714285714286%,#b7e6a5 28.571428571428573%,#7ccba2 28.571428571428573%,#7ccba2 42.857142857142854%,#46aea0 42.857142857142854%,#46aea0 57.142857142857146%,#089099 57.142857142857146%,#089099 71.42857142857143%,#00718b 71.42857142857143%,#00718b 85.71428571428571%,#045275 85.71428571428571%,#045275 100%);
-    width: 200px;
-    height: 50px;
-    border-radius: 5px;
+#gameboard {
+    width: 400px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
-#name {
-    position: absolute;
-    color: var(--dark);
-    background-color: var(--light);
-    width: fit-content;
-    opacity: 0;
-    border-radius: 5px;
-    border: 3px solid var(--medium2);
-    padding: 3px;
-    font-size: 24px;
+.box {
+    height: 80px;
+    width: 80px;
+    display: grid;
+    padding: 0px 10px;
+    color: var(--orange);
+    border: 2px solid;
+}
+
+.box:nth-child(5n) {
+    border-right: 4px solid;
+}
+.box:nth-child(5n+1) {
+    border-left: 4px solid;
+}
+.box:nth-child(-n+5) {
+    border-top: 4px solid;
+}
+.box:nth-child(n+21) {
+    border-bottom: 4px solid;
+}
+
+#X {
+    background: var(--orange)
+}
+
+#clues {
+    font-size: 20px;
+    white-space: pre-wrap;
+}
+
+.num {
+    grid-row: 1;
+    grid-column: 1;
+    font-size: 20px;
+}
+
+.text {
+    grid-row: 1;
+    grid-column: 1;
+    font-size: 50px;
+    place-self: center;
+}
+
+button {
+    padding: 10px 20px;
+    border-radius: 10px;
+    background-color: var(--orange);
+    color: #333;
+    border-color: var(--orange);
+    font-size: 18px;
+    transition: 200ms transform;
+    font-weight: 600;
+}
+
+button:hover {
+    cursor: pointer;
+    transform: translateY(-2px);
 }
