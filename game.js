@@ -6,7 +6,7 @@ let clickable = [];
 let category = "";
 let guessed = false;
 let colors = ['#045275', '#00718b', '#089099', '#46aea0', '#7ccba2', '#b7e6a5', '#f7feae'];
-let nicknames = {"united states": ["united states of america"], "democratic republic of the congo": ["dr congo", "congo, democratic republic of the"], "republic of the congo": ["congo", "congo, republic of the"], "czech republic": ["czechia"], "cape verde": ["cabo verde"], "ivory coast": ["côte d'ivoire"], "turkey": ["türkiye"], "eswatini": ["swaziland"], "north macedonia": ["macedonia"], "greenland": ["greenland (denmark)"], "falkland islands": ["falkland islands (uk)"], "new caledonia": ["new caledonia (france)"], "french polynesia": ["french polynesia (france)"], "taiwan": ["taiwan (republic of china)"], "china": ["people's republic of china"]}
+let nicknames = {"united states": ["united states of america"], "democratic republic of the congo": ["dr congo", "congo, democratic republic of the"], "republic of the congo": ["congo", "congo, republic of the"], "czech republic": ["czechia"], "cape verde": ["cabo verde"], "ivory coast": ["côte d’Ivoire"], "turkey": ["türkiye"], "eswatini": ["swaziland"], "north macedonia": ["macedonia"], "greenland": ["greenland (denmark)"], "falkland islands": ["falkland islands (uk)"], "new caledonia": ["new caledonia (france)"], "french polynesia": ["french polynesia (france)"], "taiwan": ["taiwan (republic of china)"], "china": ["people's republic of china", "china (mainland only)"], "timor-leste": ["east timor"]}
 let categories = {
     "Population": ["List_of_countries_and_dependencies_by_population", 0, 0, 1, null],
     "Population Density": ["List_of_countries_and_dependencies_by_population_density", 0, 0, 1, null],
@@ -24,11 +24,16 @@ let categories = {
     "% Forest": ["List_of_countries_by_forest_area", 1, 0, 3, null],
     "Coastline": ["List_of_countries_by_length_of_coastline", 0, 0, 1, null],
     "Fertility Rate": ["List_of_countries_by_total_fertility_rate", 0, 1, 2, null],
-    "Suicide Rate": ["List_of_countries_by_suicide_rate", 0, 0, 2, null],
     "Debt-to-GDP Ratio": ["List_of_countries_by_government_debt", 0, 0, 1, false],
     "Military Per Capita": ["List_of_countries_by_number_of_military_and_paramilitary_personnel", 0, 0, 5, null],
     "Temperature": ["List_of_countries_by_average_yearly_temperature", 0, 1, 2, null],
-    "Incarceration Rate": ["List_of_countries_by_incarceration_rate", 0, 0, 1, false]
+    "Incarceration Rate": ["List_of_countries_by_incarceration_rate", 0, 0, 1, false],
+    "# of Public Holidays": ["List_of_countries_by_number_of_public_holidays", 0, 0, 2, null],
+    "Global Peace Index": ["Global_Peace_Index", 1, 1, 2, null],
+    "Alcohol Consumption": ["List_of_countries_by_alcohol_consumption_per_capita", 1, 0, 3, false],
+    "Traffic Accident Rate": ["List_of_countries_by_traffic-related_death_rate", 0, 0, 2, false],
+    "# of Languages": ["List_of_countries_by_number_of_languages", 0, 0, 1, null],
+    "Democracy Index": ["The_Economist_Democracy_Index", 3, 1, 3, false]
 }
 
 function get_options() {
@@ -62,13 +67,9 @@ async function getWikipediaTable(file, tableIndex) {
         let tempDiv = document.createElement("div");
         tempDiv.innerHTML = htmlContent;
 
-        // Find the first table (or other if necessary)
-        let table = null;
-        if (tableIndex == 0) {
-            table = tempDiv.querySelector("table.wikitable");
-        } else {
-            table = tempDiv.querySelectorAll("table.wikitable")[tableIndex];
-        }
+        // Find the correct table
+        let tables = tempDiv.querySelectorAll("table.wikitable");
+        let table = tables[tableIndex];
         tableData = parseTable(table);
     }
     
@@ -100,35 +101,37 @@ function parseTable(table) {
 function is_match(name, country) {
     var name = name.toLowerCase();
     var country = country.toLowerCase();
+    name = name.replace(/\[\d+\]/g, "");
+    name = name.replace(" (opec)", "");
+    name = name.replace(" (opec+)", "");
+    name = name.replace("\u202f*", "");
+    
     if (name == country) {
         return true;
     }
     if (country in nicknames && nicknames[country].includes(name)) {
         return true;
     }
-    if (name == country + " (opec)" || name == country + " (opec+)" || name == country + "\u202f*") {
-        return true;
-    }
     return false;
 }
 
-function getRankByCountry(countryName) {
+function getRankByCountry(country) {
     for (let i = 0; i < clickable.length; i++) {
-        if (countryName == clickable[i][0]) {
+        if (country == clickable[i][0]) {
             return i;
         }
     }
+    if (country == "United States" && category == "Area") {
+        return 4;
+    }
+    var whoops = {"Canada": 14, "Austria": 19, "Argentina": 54, "Albania": 66, "Angola": 107, "Algeria": 110, "Afganistan": 167};
+    if (country in whoops && category == "Democracy Index") {
+        return whoops[country];
+    }
 }
 
-function getColorByCountry(countryName, category) {
-    var rank = getRankByCountry(countryName);
-    if (rank == null) {
-        if (countryName == "United States" && category == "Area") {
-            return colors[0];
-        }
-        return null;
-    }
-
+function getColorByCountry(country) {
+    var rank = getRankByCountry(country);
     for (let i = 0; i < colors.length; i++) {
         if (rank <= clickable.length / colors.length * (i+1)) {
             return colors[i];
@@ -157,7 +160,7 @@ function sortData(ascending) {
     });
 }
 
-function addListeners(category) {
+function addListeners() {
     countries.forEach(c => {
         c.addEventListener("mousemove", (e) => {
             nameLabel.style.top = e.y+10+"px"
@@ -170,7 +173,7 @@ function addListeners(category) {
             nameLabel.style.opacity = 0
         })
         
-        var color = getColorByCountry(c.id, category);
+        var color = getColorByCountry(c.id);
         if (color != null) {
             c.addEventListener("click", () => {
                 document.querySelectorAll(`[id="${c.id}"]`).forEach(country => {
@@ -181,11 +184,21 @@ function addListeners(category) {
     })
 }
 
+function reveal() {
+    countries.forEach(country => {
+        var color = getColorByCountry(country.id);
+        if (color != null) {
+            country.style.fill = color;
+        }
+    })
+}
+
 function guess(option) {
     if (guessed) {
         return;
     }
     
+    reveal();
     guessed = true;
     for (let i = 0; i < buttons.length; i++) {
         text = buttons[i].textContent;
@@ -209,7 +222,7 @@ function setButtons(options) {
 async function main() {
     var options = get_options();
     category = get_category(options);
-    //category = "Incarceration Rate";
+    //category = "Democracy Index";
     var file = categories[category][0];
     var tableIndex = categories[category][1];
     var col = categories[category][2];
@@ -225,7 +238,7 @@ async function main() {
     //console.log(tableData);
     //console.log(clickable);
     console.log(category);
-    addListeners(category);
+    addListeners();
     setButtons(options);
 }
 
