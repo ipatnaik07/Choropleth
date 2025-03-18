@@ -6,7 +6,7 @@ let clickable = [];
 let category = "";
 let guessed = false;
 let colors = ['#045275', '#00718b', '#089099', '#46aea0', '#7ccba2', '#b7e6a5', '#f7feae'];
-let nicknames = {"united states": ["united states of america"], "democratic republic of the congo": ["dr congo", "congo, democratic republic of the"], "republic of the congo": ["congo", "congo, republic of the"], "czech republic": ["czechia"], "cape verde": ["cabo verde"], "ivory coast": ["côte d’Ivoire"], "turkey": ["türkiye"], "eswatini": ["swaziland"], "north macedonia": ["macedonia"], "greenland": ["greenland (denmark)"], "falkland islands": ["falkland islands (uk)"], "new caledonia": ["new caledonia (france)"], "french polynesia": ["french polynesia (france)"], "taiwan": ["taiwan (republic of china)"], "china": ["people's republic of china", "china (mainland only)"], "timor-leste": ["east timor"]}
+let nicknames = {"united states": ["united states of america"], "democratic republic of the congo": ["dr congo", "congo, democratic republic of the"], "republic of the congo": ["congo", "congo, republic of the"], "czech republic": ["czechia"], "cape verde": ["cabo verde"], "ivory coast": ["côte d’Ivoire"], "turkey": ["türkiye"], "eswatini": ["swaziland"], "north macedonia": ["macedonia"], "greenland": ["greenland (denmark)"], "falkland islands": ["falkland islands (uk)"], "new caledonia": ["new caledonia (france)"], "french polynesia": ["french polynesia (france)"], "taiwan": ["taiwan (republic of china)"], "china": ["people's republic of china", "china (mainland only)"], "timor-leste": ["east timor"], "united kingdom": ["united kingdom. england and wales"]}
 let categories = {
     "Population": ["List_of_countries_and_dependencies_by_population", 0, 0, 1, null],
     "Population Density": ["List_of_countries_and_dependencies_by_population_density", 0, 0, 1, null],
@@ -19,7 +19,7 @@ let categories = {
     "Homicide Rate": ["List_of_countries_by_intentional_homicide_rate", 1, 0, 1, false],
     "Air Pollution": ["List_of_countries_by_air_pollution", 0, 1, 2, null],
     "Obesity Rate": ["List_of_countries_by_obesity_rate", 0, 1, 2, null],
-    "Elevation": ["List_of_countries_by_average_elevation", 0, 0, 1, null],
+    "Average Elevation": ["List_of_countries_by_average_elevation", 0, 0, 1, false],
     "Rainfall": ["List_of_countries_by_average_annual_precipitation", 0, 1, 2, null],
     "% Forest": ["List_of_countries_by_forest_area", 1, 0, 3, null],
     "Coastline": ["List_of_countries_by_length_of_coastline", 0, 0, 1, null],
@@ -33,7 +33,8 @@ let categories = {
     "Alcohol Consumption": ["List_of_countries_by_alcohol_consumption_per_capita", 1, 0, 3, false],
     "Traffic Accident Rate": ["List_of_countries_by_traffic-related_death_rate", 0, 0, 2, false],
     "# of Languages": ["List_of_countries_by_number_of_languages", 0, 0, 1, null],
-    "Democracy Index": ["The_Economist_Democracy_Index", 3, 1, 3, false]
+    "Democracy Index": ["The_Economist_Democracy_Index", 3, 1, 3, false],
+    "Average Human Height": ["Average_human_height_by_country", 0, 0, 1, false]
 }
 
 function get_options() {
@@ -222,7 +223,7 @@ function setButtons(options) {
 async function main() {
     var options = get_options();
     category = get_category(options);
-    //category = "Democracy Index";
+    //category = "Oil Production";
     var file = categories[category][0];
     var tableIndex = categories[category][1];
     var col = categories[category][2];
