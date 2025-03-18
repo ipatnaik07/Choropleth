@@ -209,7 +209,7 @@ function setButtons(options) {
 async function main() {
     var options = get_options();
     category = get_category(options);
-    category = "Incarceration Rate";
+    //category = "Incarceration Rate";
     var file = categories[category][0];
     var tableIndex = categories[category][1];
     var col = categories[category][2];
@@ -222,8 +222,8 @@ async function main() {
         sortData(ascending);
     }
 
-    console.log(tableData);
-    console.log(clickable);
+    //console.log(tableData);
+    //console.log(clickable);
     console.log(category);
     addListeners(category);
     setButtons(options);
