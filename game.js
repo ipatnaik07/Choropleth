@@ -6,7 +6,7 @@ let clickable = [];
 let category = "";
 let guessed = false;
 let colors = ['#045275', '#00718b', '#089099', '#46aea0', '#7ccba2', '#b7e6a5', '#f7feae'];
-let nicknames = {"united states": ["united states of america"], "democratic republic of the congo": ["dr congo"], "republic of the congo": ["congo"], "czech republic": ["czechia"], "cape verde": ["cabo verde"], "ivory coast": ["côte d'ivoire"], "turkey": ["türkiye"], "eswatini": ["swaziland"], "north macedonia": ["macedonia"], "greenland": ["greenland (denmark)"], "falkland islands": ["falkland islands (uk)"], "new caledonia": ["new caledonia (france)"], "french polynesia": ["french polynesia (france)"]}
+let nicknames = {"united states": ["united states of america"], "democratic republic of the congo": ["dr congo", "congo, democratic republic of the"], "republic of the congo": ["congo", "congo, republic of the"], "czech republic": ["czechia"], "cape verde": ["cabo verde"], "ivory coast": ["côte d'ivoire"], "turkey": ["türkiye"], "eswatini": ["swaziland"], "north macedonia": ["macedonia"], "greenland": ["greenland (denmark)"], "falkland islands": ["falkland islands (uk)"], "new caledonia": ["new caledonia (france)"], "french polynesia": ["french polynesia (france)"], "taiwan": ["taiwan (republic of china)"], "china": ["people's republic of china"]}
 let categories = {
     "Population": ["List_of_countries_and_dependencies_by_population", 0, 0, 1, null],
     "Population Density": ["List_of_countries_and_dependencies_by_population_density", 0, 0, 1, null],
@@ -17,7 +17,18 @@ let categories = {
     "Oil Production": ["List_of_countries_by_oil_production", 0, 0, 1, null],
     "Meat Consumption": ["List_of_countries_by_meat_consumption", 0, 0, 1, false],
     "Homicide Rate": ["List_of_countries_by_intentional_homicide_rate", 1, 0, 1, false],
-    "Air Pollution": ["List_of_countries_by_air_pollution", 0, 1, 2, false]
+    "Air Pollution": ["List_of_countries_by_air_pollution", 0, 1, 2, null],
+    "Obesity Rate": ["List_of_countries_by_obesity_rate", 0, 1, 2, null],
+    "Elevation": ["List_of_countries_by_average_elevation", 0, 0, 1, null],
+    "Rainfall": ["List_of_countries_by_average_annual_precipitation", 0, 1, 2, null],
+    "% Forest": ["List_of_countries_by_forest_area", 1, 0, 3, null],
+    "Coastline": ["List_of_countries_by_length_of_coastline", 0, 0, 1, null],
+    "Fertility Rate": ["List_of_countries_by_total_fertility_rate", 0, 1, 2, null],
+    "Suicide Rate": ["List_of_countries_by_suicide_rate", 0, 0, 2, null],
+    "Debt-to-GDP Ratio": ["List_of_countries_by_government_debt", 0, 0, 1, false],
+    "Military Per Capita": ["List_of_countries_by_number_of_military_and_paramilitary_personnel", 0, 0, 5, null],
+    "Temperature": ["List_of_countries_by_average_yearly_temperature", 0, 1, 2, null],
+    "Incarceration Rate": ["List_of_countries_by_incarceration_rate", 0, 0, 1, false]
 }
 
 function get_options() {
@@ -128,7 +139,7 @@ function getColorByCountry(countryName, category) {
 function hitList(col, sortCol) {
     for (let i = 1; i < tableData.length; i++) {
         let row = tableData[i];
-        for (let j = 1; j < countries.length; j++) {
+        for (let j = 0; j < countries.length; j++) {
             country = countries[j].id;
             if (is_match(row[col], country)) {
                 clickable.push([country, row[sortCol]])
@@ -198,7 +209,7 @@ function setButtons(options) {
 async function main() {
     var options = get_options();
     category = get_category(options);
-    //category = "Air Pollution"
+    category = "Incarceration Rate";
     var file = categories[category][0];
     var tableIndex = categories[category][1];
     var col = categories[category][2];
@@ -211,8 +222,8 @@ async function main() {
         sortData(ascending);
     }
 
-    //console.log(tableData);
-    //console.log(clickable);
+    console.log(tableData);
+    console.log(clickable);
     console.log(category);
     addListeners(category);
     setButtons(options);
