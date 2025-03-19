@@ -1,12 +1,18 @@
 let nameLabel = document.getElementById("name");
 let countries = document.querySelectorAll(".allPaths");
 let buttons = document.querySelectorAll('.button-container button');
+let entry = document.getElementById("entry");
+let last = document.getElementById("last");
+let box = document.getElementById("box");
+let reset = document.getElementById("reset");
+
 let tableData = [];
 let clickable = [];
+let options = [];
 let category = "";
 let guessed = false;
 let colors = ['#045275', '#00718b', '#089099', '#46aea0', '#7ccba2', '#b7e6a5', '#f7feae'];
-let nicknames = {"united states": ["united states of america"], "democratic republic of the congo": ["dr congo", "congo, democratic republic of the"], "republic of the congo": ["congo", "congo, republic of the"], "czech republic": ["czechia"], "cape verde": ["cabo verde"], "ivory coast": ["côte d’Ivoire"], "turkey": ["türkiye"], "eswatini": ["swaziland"], "north macedonia": ["macedonia"], "greenland": ["greenland (denmark)"], "falkland islands": ["falkland islands (uk)"], "new caledonia": ["new caledonia (france)"], "french polynesia": ["french polynesia (france)"], "taiwan": ["taiwan (republic of china)"], "china": ["people's republic of china", "china (mainland only)"], "timor-leste": ["east timor"], "united kingdom": ["united kingdom. england and wales"]}
+let nicknames = {"united states": ["united states of america"], "democratic republic of the congo": ["dr congo", "congo, democratic republic of the"], "republic of the congo": ["congo", "congo, republic of the"], "czech republic": ["czechia"], "cape verde": ["cabo verde"], "ivory coast": ["côte d’ivoire"], "turkey": ["türkiye"], "eswatini": ["swaziland"], "north macedonia": ["macedonia"], "greenland": ["greenland (denmark)"], "falkland islands": ["falkland islands (uk)"], "new caledonia": ["new caledonia (france)"], "french polynesia": ["french polynesia (france)"], "taiwan": ["taiwan (republic of china)"], "china": ["people's republic of china", "china (mainland only)"], "timor-leste": ["east timor"], "united kingdom": ["united kingdom. england and wales"]}
 let categories = {
     "Population": ["List_of_countries_and_dependencies_by_population", 0, 0, 1, null],
     "Population Density": ["List_of_countries_and_dependencies_by_population_density", 0, 0, 1, null],
@@ -37,21 +43,20 @@ let categories = {
     "Average Human Height": ["Average_human_height_by_country", 0, 0, 1, false]
 }
 
-function get_options() {
+function getOptions() {
     var keys = Object.keys(categories);
-    var options = [];
+    options = [];
     while (options.length < 5) {
         var index = Math.floor(Math.random() * keys.length);
         if (!options.includes(keys[index])) {
             options.push(keys[index]);
         }
     }
-    return options;
 }
 
-function get_category(options) {
+function getCategory() {
     var index = Math.floor(Math.random() * options.length);
-    return options[index];
+    category = options[index];
 }
 
 async function getWikipediaTable(file, tableIndex) {
@@ -99,7 +104,7 @@ function parseTable(table) {
     return data;
 }
 
-function is_match(name, country) {
+function isMatch(name, country) {
     var name = name.toLowerCase();
     var country = country.toLowerCase();
     name = name.replace(/\[\d+\]/g, "");
@@ -142,10 +147,10 @@ function getColorByCountry(country) {
 
 function hitList(col, sortCol) {
     for (let i = 1; i < tableData.length; i++) {
-        let row = tableData[i];
+        var row = tableData[i];
         for (let j = 0; j < countries.length; j++) {
             country = countries[j].id;
-            if (is_match(row[col], country)) {
+            if (isMatch(row[col], country)) {
                 clickable.push([country, row[sortCol]])
                 break;
             }
@@ -159,6 +164,22 @@ function sortData(ascending) {
         let bValue = parseFloat(b[1].replace(/,/g, "")) || 0;
         return ascending ? aValue - bValue : bValue - aValue;
     });
+}
+
+function search() {
+    var name = entry.value;
+    for (let i = 0; i < clickable.length; i++) {
+        var country = clickable[i][0]
+        if (isMatch(name, country)) {
+            entry.value = "";
+            var color = getColorByCountry(country)
+            document.querySelectorAll(`[id="${country}"]`).forEach(c => {
+                c.style.fill = color;
+                box.style.backgroundColor = color;
+                last.textContent = country;
+            })
+        }
+    }
 }
 
 function addListeners() {
@@ -179,10 +200,39 @@ function addListeners() {
             c.addEventListener("click", () => {
                 document.querySelectorAll(`[id="${c.id}"]`).forEach(country => {
                     country.style.fill = color;
+                    box.style.backgroundColor = color;
+                    last.textContent = c.id;
                 })
             })
         }
     })
+
+    entry.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            search();
+        }
+    });
+
+    reset.addEventListener("click", resetGame);
+}
+
+function resetGame() {
+    var light = "#efe9e1"
+    countries.forEach(country => {
+        country.style.fill = light;
+    })
+    buttons.forEach(button => {
+        button.style.backgroundColor = light;
+        button.textContent = ". . .";
+    })
+    last.textContent = "last reveal";
+    box.style.backgroundColor = light;
+    entry.value = "";
+
+    tableData = [];
+    clickable = [];
+    guessed = false;
+    main();
 }
 
 function reveal() {
@@ -195,14 +245,10 @@ function reveal() {
 }
 
 function guess(option) {
-    if (guessed) {
-        return;
-    }
-    
     reveal();
     guessed = true;
     for (let i = 0; i < buttons.length; i++) {
-        text = buttons[i].textContent;
+        var text = buttons[i].textContent;
         if (text == category) {
             buttons[i].style.backgroundColor = "#78c1a3"
         } else if (text == option) {
@@ -211,18 +257,20 @@ function guess(option) {
     }
 }
 
-function setButtons(options) {
+function setButtons() {
     for (let i = 0; i < buttons.length; i++) {
         buttons[i].textContent = options[i];
         buttons[i].addEventListener("click", () => {
-            guess(options[i]);
+            if (!guessed) {
+                guess(options[i]);
+            }
         })
     }
 }
 
 async function main() {
-    var options = get_options();
-    category = get_category(options);
+    getOptions();
+    getCategory();
     //category = "Oil Production";
     var file = categories[category][0];
     var tableIndex = categories[category][1];
@@ -240,7 +288,7 @@ async function main() {
     //console.log(clickable);
     console.log(category);
     addListeners();
-    setButtons(options);
+    setButtons();
 }
 
 main();
