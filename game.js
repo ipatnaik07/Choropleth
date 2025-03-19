@@ -4,6 +4,7 @@ let buttons = document.querySelectorAll(".button-container button");
 let entry = document.getElementById("entry");
 let last = document.getElementById("last");
 let box = document.getElementById("box");
+let reveals = document.getElementById("reveals");
 let reset = document.getElementById("reset");
 
 let tableData = [];
@@ -11,6 +12,7 @@ let clickable = [];
 let options = [];
 let category = "";
 let guessed = false;
+let numReveals = 0;
 let colors = ["#045275", "#00718b", "#089099", "#46aea0", "#7ccba2", "#b7e6a5", "#f7feae"];
 let nicknames = {"united states": ["united states of america"], "democratic republic of the congo": ["dr congo", "congo, democratic republic of the"], "republic of the congo": ["congo", "congo, republic of the"], "czech republic": ["czechia"], "cape verde": ["cabo verde"], "ivory coast": ["côte d’ivoire"], "turkey": ["türkiye"], "eswatini": ["swaziland"], "north macedonia": ["macedonia"], "greenland": ["greenland (denmark)"], "falkland islands": ["falkland islands (uk)"], "new caledonia": ["new caledonia (france)"], "french polynesia": ["french polynesia (france)"], "taiwan": ["taiwan (republic of china)"], "china": ["people's republic of china", "china (mainland only)"], "timor-leste": ["east timor"], "united kingdom": ["united kingdom. england and wales"]}
 let categories = {
@@ -32,7 +34,7 @@ let categories = {
     "Fertility Rate": ["List_of_countries_by_total_fertility_rate", 0, 1, 2, null],
     "Debt-to-GDP Ratio": ["List_of_countries_by_government_debt", 0, 0, 1, false],
     "Military Per Capita": ["List_of_countries_by_number_of_military_and_paramilitary_personnel", 0, 0, 5, null],
-    "Temperature": ["List_of_countries_by_average_yearly_temperature", 0, 1, 2, null],
+    "Average Temperature": ["List_of_countries_by_average_yearly_temperature", 0, 1, 2, null],
     "Incarceration Rate": ["List_of_countries_by_incarceration_rate", 0, 0, 1, false],
     "# of Public Holidays": ["List_of_countries_by_number_of_public_holidays", 0, 0, 2, null],
     "Global Peace Index": ["Global_Peace_Index", 1, 1, 2, null],
@@ -171,13 +173,15 @@ function search() {
     for (let i = 0; i < clickable.length; i++) {
         var country = clickable[i][0]
         if (isMatch(name, country)) {
-            entry.value = "";
             var color = getColorByCountry(country)
             document.querySelectorAll(`[id="${country}"]`).forEach(c => {
                 c.style.fill = color;
                 box.style.backgroundColor = color;
                 last.textContent = country;
             })
+            entry.value = "";
+            numReveals++;
+            reveals.textContent = "reveals: " + numReveals;
         }
     }
 }
@@ -203,6 +207,8 @@ function addListeners() {
                     box.style.backgroundColor = color;
                     last.textContent = c.id;
                 })
+                numReveals++;
+                reveals.textContent = "reveals: " + numReveals;
             })
         }
     })
@@ -226,12 +232,14 @@ function resetGame() {
         button.textContent = ". . .";
     })
     last.textContent = "last reveal";
+    reveals.textContent = "reveals: 0";
     box.style.backgroundColor = light;
     entry.value = "";
 
     tableData = [];
     clickable = [];
     guessed = false;
+    numReveals = 0;
     main();
 }
 

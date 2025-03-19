@@ -26,8 +26,29 @@ svg path:hover {
 
 .misc {
     display: flex;
+    align-items: center;
     gap: 20px;
     margin-bottom: 10px;
+}
+
+.misc p {
+    color: var(--light);
+    font-size: 24px;
+    font-family: inherit;
+    margin: 0;
+}
+
+.last {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#box {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--light);
 }
 
 #entry {
@@ -50,26 +71,6 @@ svg path:hover {
 
 #reset:hover {
     background-color: var(--medium2);
-}
-
-.last {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-#last {
-    color: var(--light);
-    font-size: 24px;
-    font-family: inherit;
-    margin: 0;
-}
-
-#box {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: var(--light);
 }
 
 .button-container {
