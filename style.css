@@ -75,6 +75,7 @@ svg path:hover {
 .button-container {
     display: flex;
     gap: 20px;
+    margin-bottom: 10px;
 }
 
 .button-container button {
@@ -98,7 +99,11 @@ svg path:hover {
     font-size: 24px;
     color: var(--light);
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.palette-container p {
+    margin: 0;
 }
 
 #palette {
