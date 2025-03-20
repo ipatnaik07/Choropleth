@@ -13,6 +13,7 @@ let options = [];
 let category = "";
 let guessed = false;
 let numReveals = 0;
+let game = 0;
 let colors = ["#045275", "#00718b", "#089099", "#46aea0", "#7ccba2", "#b7e6a5", "#f7feae"];
 let nicknames = {"united states": ["united states of america"], "democratic republic of the congo": ["dr congo", "congo, democratic republic of the"], "republic of the congo": ["congo", "congo, republic of the"], "czech republic": ["czechia"], "cape verde": ["cabo verde"], "ivory coast": ["côte d’ivoire"], "turkey": ["türkiye"], "eswatini": ["swaziland"], "north macedonia": ["macedonia"], "greenland": ["greenland (denmark)"], "falkland islands": ["falkland islands (uk)"], "new caledonia": ["new caledonia (france)"], "french polynesia": ["french polynesia (france)"], "taiwan": ["taiwan (republic of china)"], "china": ["people's republic of china", "china (mainland only)"], "timor-leste": ["east timor"], "united kingdom": ["united kingdom. england and wales"]}
 let categories = {
@@ -203,8 +204,8 @@ function addListeners() {
         if (color != null) {
             c.addEventListener("click", () => {
                 document.querySelectorAll(`[id="${c.id}"]`).forEach(country => {
-                    country.style.fill = color;
-                    box.style.backgroundColor = color;
+                    country.style.fill = getColorByCountry(c.id);
+                    box.style.backgroundColor = getColorByCountry(c.id);
                     last.textContent = c.id;
                 })
                 numReveals++;
@@ -212,6 +213,14 @@ function addListeners() {
             })
         }
     })
+
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener("click", () => {
+            if (!guessed) {
+                guess(options[i]);
+            }
+        })
+    }
 
     entry.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
@@ -240,6 +249,7 @@ function resetGame() {
     clickable = [];
     guessed = false;
     numReveals = 0;
+    game++;
     main();
 }
 
@@ -268,17 +278,14 @@ function guess(option) {
 function setButtons() {
     for (let i = 0; i < buttons.length; i++) {
         buttons[i].textContent = options[i];
-        buttons[i].addEventListener("click", () => {
-            if (!guessed) {
-                guess(options[i]);
-            }
-        })
     }
 }
 
 async function main() {
     getOptions();
     getCategory();
+    setButtons();
+    
     //category = "Oil Production";
     var file = categories[category][0];
     var tableIndex = categories[category][1];
@@ -295,8 +302,10 @@ async function main() {
     //console.log(tableData);
     //console.log(clickable);
     console.log(category);
-    addListeners();
-    setButtons();
+    if (game == 0) {
+        addListeners();
+    }
 }
 
 main();
+addListeners();
