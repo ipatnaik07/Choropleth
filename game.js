@@ -10,10 +10,12 @@ let reset = document.getElementById("reset");
 let tableData = [];
 let clickable = [];
 let options = [];
+let revealed = [];
 let category = "";
 let guessed = false;
 let numReveals = 0;
 let game = 0;
+
 let colors = ["#045275", "#00718b", "#089099", "#46aea0", "#7ccba2", "#b7e6a5", "#f7feae"];
 let nicknames = {"united states": ["united states of america"], "democratic republic of the congo": ["dr congo", "congo, democratic republic of the"], "republic of the congo": ["congo", "congo, republic of the"], "czech republic": ["czechia"], "cape verde": ["cabo verde"], "ivory coast": ["côte d’ivoire"], "turkey": ["türkiye"], "eswatini": ["swaziland"], "north macedonia": ["macedonia"], "greenland": ["greenland (denmark)"], "falkland islands": ["falkland islands (uk)"], "new caledonia": ["new caledonia (france)"], "french polynesia": ["french polynesia (france)"], "taiwan": ["taiwan (republic of china)"], "china": ["people's republic of china", "china (mainland only)"], "timor-leste": ["east timor"], "united kingdom": ["united kingdom. england and wales"]}
 let categories = {
@@ -173,7 +175,7 @@ function search() {
     var name = entry.value;
     for (let i = 0; i < clickable.length; i++) {
         var country = clickable[i][0]
-        if (isMatch(name, country)) {
+        if (isMatch(name, country) && !revealed.includes(country)) {
             var color = getColorByCountry(country)
             document.querySelectorAll(`[id="${country}"]`).forEach(c => {
                 c.style.fill = color;
@@ -183,6 +185,7 @@ function search() {
             entry.value = "";
             numReveals++;
             reveals.textContent = "reveals: " + numReveals;
+            revealed.push(country);
         }
     }
 }
@@ -200,9 +203,9 @@ function addListeners() {
             nameLabel.style.opacity = 0
         })
         
-        var color = getColorByCountry(c.id);
-        if (color != null) {
-            c.addEventListener("click", () => {
+        c.addEventListener("click", () => {
+            var color = getColorByCountry(c.id);
+            if (color != null && !revealed.includes(c.id)) {
                 document.querySelectorAll(`[id="${c.id}"]`).forEach(country => {
                     country.style.fill = getColorByCountry(c.id);
                     box.style.backgroundColor = getColorByCountry(c.id);
@@ -210,8 +213,9 @@ function addListeners() {
                 })
                 numReveals++;
                 reveals.textContent = "reveals: " + numReveals;
-            })
-        }
+                revealed.push(c.id);
+            }
+        })
     })
 
     for (let i = 0; i < buttons.length; i++) {
@@ -247,6 +251,7 @@ function resetGame() {
 
     tableData = [];
     clickable = [];
+    revealed = [];
     guessed = false;
     numReveals = 0;
     game++;
@@ -308,4 +313,3 @@ async function main() {
 }
 
 main();
-addListeners();
