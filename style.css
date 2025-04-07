@@ -3,6 +3,8 @@
     --medium1: #d1c7bd;
     --medium2: #ac9c8d;
     --dark: #322d29;
+    --bluyel: linear-gradient(90deg,#f7feae 0,#f7feae 14.285714285714286%,#b7e6a5 14.285714285714286%,#b7e6a5 28.571428571428573%,#7ccba2 28.571428571428573%,#7ccba2 42.857142857142854%,#46aea0 42.857142857142854%,#46aea0 57.142857142857146%,#089099 57.142857142857146%,#089099 71.42857142857143%,#00718b 71.42857142857143%,#00718b 85.71428571428571%,#045275 85.71428571428571%,#045275 100%);
+    --sunset: linear-gradient(90deg,#fcde9c 0,#fcde9c 14.285714285714286%,#faa476 14.285714285714286%,#faa476 28.571428571428573%,#f0746e 28.571428571428573%,#f0746e 42.857142857142854%,#e34f6f 42.857142857142854%,#e34f6f 57.142857142857146%,#dc3977 57.142857142857146%,#dc3977 71.42857142857143%,#b9257a 71.42857142857143%,#b9257a 85.71428571428571%,#7c1d6f 85.71428571428571%,#7c1d6f 100%);
 }
 
 body {
@@ -107,11 +109,18 @@ svg path:hover {
     margin: 0;
 }
 
-#palette {
-    background: linear-gradient(90deg,#f7feae 0,#f7feae 14.285714285714286%,#b7e6a5 14.285714285714286%,#b7e6a5 28.571428571428573%,#7ccba2 28.571428571428573%,#7ccba2 42.857142857142854%,#46aea0 42.857142857142854%,#46aea0 57.142857142857146%,#089099 57.142857142857146%,#089099 71.42857142857143%,#00718b 71.42857142857143%,#00718b 85.71428571428571%,#045275 85.71428571428571%,#045275 100%);
+.palette {
     width: 200px;
     height: 50px;
     border-radius: 5px;
+}
+
+#bluyel {
+    background: var(--bluyel);
+}
+
+#sunset {
+    background: var(--sunset);
 }
 
 .rainbow {
@@ -130,4 +139,24 @@ svg path:hover {
     border: 3px solid var(--medium2);
     padding: 3px;
     font-size: 24px;
+}
+
+#theme {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: 50px;
+    height: 50px;
+
+    color: var(--dark);
+    background-color: #e34f6f;
+    border-radius: 50%;
+    border: 3px solid var(--medium2);
+    font-size: 18px;
+    font-family: inherit;
+}
+
+#theme:hover {
+    width: 60px;
+    height: 60px;
 }

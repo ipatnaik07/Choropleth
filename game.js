@@ -1,11 +1,14 @@
 let nameLabel = document.getElementById("name");
 let countries = document.querySelectorAll(".allPaths");
 let buttons = document.querySelectorAll(".button-container button");
+let letters = document.querySelectorAll(".rainbow span");
 let entry = document.getElementById("entry");
 let last = document.getElementById("last");
 let box = document.getElementById("box");
 let reveals = document.getElementById("reveals");
 let reset = document.getElementById("reset");
+let theme = document.getElementById("theme");
+let palette = document.getElementById("bluyel");
 
 let tableData = [];
 let clickable = [];
@@ -16,7 +19,9 @@ let guessed = false;
 let numReveals = 0;
 let game = 0;
 
-let colors = ["#045275", "#00718b", "#089099", "#46aea0", "#7ccba2", "#b7e6a5", "#f7feae"];
+let bluyel = ["#045275", "#00718b", "#089099", "#46aea0", "#7ccba2", "#b7e6a5", "#f7feae"];
+let sunset = ["#7c1d6f", "#b9257a", "#dc3977", "#e34f6f", "#f0746e", "#faa476", "#fcde9c"];
+let colors = bluyel;
 let nicknames = {"united states": ["united states of america", "usa", "us"], "united kingdom": ["united kingdom. england and wales", "uk"], "united arab emirates": ["uae"], "democratic republic of the congo": ["dr congo", "congo, democratic republic of the", "drc"], "republic of the congo": ["congo", "congo, republic of the"], "czech republic": ["czechia"], "cape verde": ["cabo verde"], "ivory coast": ["côte d’ivoire"], "turkey": ["türkiye"], "eswatini": ["swaziland"], "north macedonia": ["macedonia"], "greenland": ["greenland (denmark)"], "falkland islands": ["falkland islands (uk)"], "new caledonia": ["new caledonia (france)"], "french polynesia": ["french polynesia (france)"], "taiwan": ["taiwan (republic of china)"], "china": ["people's republic of china", "china (mainland only)"], "timor-leste": ["east timor"]}
 let categories = {
     "Population": ["List_of_countries_and_dependencies_by_population", 0, 0, 1, null],
@@ -35,15 +40,10 @@ let categories = {
     "% Forest": ["List_of_countries_by_forest_area", 1, 0, 3, null],
     "Coastline": ["List_of_countries_by_length_of_coastline", 0, 0, 1, null],
     "Fertility Rate": ["List_of_countries_by_total_fertility_rate", 0, 1, 2, null],
-    "Debt-to-GDP Ratio": ["List_of_countries_by_government_debt", 0, 0, 1, false],
     "Military Per Capita": ["List_of_countries_by_number_of_military_and_paramilitary_personnel", 0, 0, 5, null],
     "Average Temperature": ["List_of_countries_by_average_yearly_temperature", 0, 1, 2, null],
-    "Incarceration Rate": ["List_of_countries_by_incarceration_rate", 0, 0, 1, false],
-    "# of Public Holidays": ["List_of_countries_by_number_of_public_holidays", 0, 0, 2, null],
     "Global Peace Index": ["Global_Peace_Index", 1, 1, 2, null],
     "Alcohol Consumption": ["List_of_countries_by_alcohol_consumption_per_capita", 1, 0, 3, false],
-    "Traffic Accident Rate": ["List_of_countries_by_traffic-related_death_rate", 0, 0, 2, false],
-    "# of Languages": ["List_of_countries_by_number_of_languages", 0, 0, 1, null],
     "Democracy Index": ["The_Economist_Democracy_Index", 3, 1, 3, false],
     "Average Human Height": ["Average_human_height_by_country", 0, 0, 1, false]
 }
@@ -233,6 +233,7 @@ function addListeners() {
     });
 
     reset.addEventListener("click", resetGame);
+    theme.addEventListener("click", resetColor);
 }
 
 function resetGame() {
@@ -256,6 +257,33 @@ function resetGame() {
     numReveals = 0;
     game++;
     main();
+}
+
+function resetColor() {
+    var other;
+    if (colors == sunset) {
+        colors = bluyel;
+        other = sunset;
+        palette.id = "bluyel";
+        theme.textContent = "red"
+    } else {
+        colors = sunset;
+        other = bluyel;
+        palette.id = "sunset";
+        theme.textContent = "blue"
+    }
+    theme.style.backgroundColor = other[3];
+    box.style.backgroundColor = getColorByCountry(last.textContent);
+
+    countries.forEach(country => {
+        if (guessed || revealed.includes(country.id)) {
+            country.style.fill = getColorByCountry(country.id);
+        }
+    })
+
+    for (let i = 0; i < letters.length; i++) {
+        letters[i].style.color = colors[colors.length-1-Math.floor(i/2)];
+    }
 }
 
 function reveal() {
